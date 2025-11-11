@@ -88,8 +88,8 @@ struct EmberTouchCanvasView: View {
                     
                     // Bottom controls
                     VStack(spacing: 20) {
-                        // Quick gestures
-                        Button(action: { showingGestureLibrary = true }) {
+                        // Quick gestures with magnetic interaction
+                        MagneticButton(action: { showingGestureLibrary = true }) {
                             HStack(spacing: 12) {
                                 Image(systemName: "hand.tap.fill")
                                     .emberIconLarge()
@@ -113,26 +113,32 @@ struct EmberTouchCanvasView: View {
                         }
                         .padding(.horizontal, 24)
                         
-                        // Send button
-                        Button(action: {
-                            EmberHapticsManager.shared.playSuccess()
-                            dismiss()
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "paperplane.fill")
-                                    .emberIconLarge()
-                                
-                                Text("Send Touch")
-                                    .emberHeadline()
+                        // Send button with breathing animation
+                        BreathingView(intensity: 0.03) {
+                            InteractiveButton(
+                                hapticType: .press,
+                                style: .intense,
+                                action: {
+                                    EmberHapticsManager.shared.playSuccess()
+                                    dismiss()
+                                }
+                            ) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "paperplane.fill")
+                                        .emberIconLarge()
+                                    
+                                    Text("Send Touch")
+                                        .emberHeadline()
+                                }
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .emberCardPadding()
+                                .background(
+                                    EmberColors.primaryGradient,
+                                    in: RoundedRectangle(cornerRadius: 16)
+                                )
+                                .emberPrimaryShadow()
                             }
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .emberCardPadding()
-                            .background(
-                                EmberColors.primaryGradient,
-                                in: RoundedRectangle(cornerRadius: 16)
-                            )
-                            .emberPrimaryShadow()
                         }
                         .padding(.horizontal, 24)
                         .disabled(!isDrawing)
@@ -166,60 +172,148 @@ struct EmberTouchCanvasView: View {
     }
 }
 
-// MARK: - Ember Drawing Canvas
+// MARK: - Enhanced Drawing Canvas with Micro-interactions
 struct EmberDrawingCanvas: View {
     @Binding var isActive: Bool
-    @State private var paths: [Path] = []
+    @State private var paths: [DrawingPath] = []
     @State private var currentPath = Path()
+    @State private var currentPoints: [CGPoint] = []
+    @State private var touchParticles: [CanvasTouchParticle] = []
+    @State private var pressure: CGFloat = 0.5
     
     var body: some View {
         ZStack {
-            // Drawing surface
-            Rectangle()
-                .fill(Color.clear)
-                .contentShape(Rectangle())
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            if !isActive {
-                                isActive = true
-                                currentPath = Path()
-                                currentPath.move(to: value.location)
-                            } else {
-                                currentPath.addLine(to: value.location)
-                            }
-                        }
-                        .onEnded { _ in
-                            paths.append(currentPath)
-                            currentPath = Path()
-                        }
-                )
+            // Touch particles
+            ForEach(touchParticles) { particle in
+                Circle()
+                    .fill(particle.color)
+                    .frame(width: particle.size, height: particle.size)
+                    .position(particle.position)
+                    .opacity(particle.opacity)
+                    .scaleEffect(particle.scale)
+            }
             
-            // Render all paths
-            ForEach(Array(paths.enumerated()), id: \.offset) { index, path in
-                path
-                    .stroke(
-                        LinearGradient(
-                            colors: [EmberColors.roseQuartz, EmberColors.peachyKeen],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round)
-                    )
+            // Drawing surface with gesture recognition
+            GestureRecognitionView { gesture in
+                EmberHapticsManager.shared.playGesture(gesture.hapticPattern)
+            } content: {
+                PressureSensitiveView { newPressure in
+                    pressure = newPressure
+                } content: {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .contentShape(Rectangle())
+                }
+            }
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        handleTouchChanged(at: value.location)
+                    }
+                    .onEnded { _ in
+                        handleTouchEnded()
+                    }
+            )
+            
+            // Render all paths with trails
+            ForEach(paths) { drawingPath in
+                GestureTrail(
+                    points: drawingPath.points,
+                    color: drawingPath.color,
+                    width: drawingPath.width
+                )
             }
             
             // Render current path
-            currentPath
-                .stroke(
-                    LinearGradient(
-                        colors: [EmberColors.roseQuartz, EmberColors.peachyKeen],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round)
+            if !currentPoints.isEmpty {
+                GestureTrail(
+                    points: currentPoints,
+                    color: EmberColors.roseQuartz,
+                    width: 4 + pressure * 6
                 )
+            }
         }
     }
+    
+    private func handleTouchChanged(at location: CGPoint) {
+        if !isActive {
+            isActive = true
+            currentPoints = [location]
+            EmberHapticsManager.shared.playLight()
+        } else {
+            currentPoints.append(location)
+        }
+        
+        // Create touch particles
+        createTouchParticles(at: location)
+        
+        // Trigger haptic feedback based on drawing speed
+        HapticVisualSync.trigger(.touch, at: location)
+    }
+    
+    private func handleTouchEnded() {
+        guard !currentPoints.isEmpty else { return }
+        
+        let drawingPath = DrawingPath(
+            points: currentPoints,
+            color: EmberColors.roseQuartz,
+            width: 4 + pressure * 6
+        )
+        paths.append(drawingPath)
+        currentPoints.removeAll()
+        
+        EmberHapticsManager.shared.playMedium()
+    }
+    
+    private func createTouchParticles(at location: CGPoint) {
+        let colors = [EmberColors.roseQuartz, EmberColors.peachyKeen, EmberColors.coralPop]
+        
+        for _ in 0..<3 {
+            let particle = CanvasTouchParticle(
+                position: CGPoint(
+                    x: location.x + CGFloat.random(in: -10...10),
+                    y: location.y + CGFloat.random(in: -10...10)
+                ),
+                size: CGFloat.random(in: 4...8),
+                color: colors.randomElement() ?? EmberColors.roseQuartz,
+                opacity: 0.8,
+                scale: 1.0
+            )
+            touchParticles.append(particle)
+            
+            // Animate particle
+            withAnimation(.easeOut(duration: 0.5)) {
+                if let index = touchParticles.firstIndex(where: { $0.id == particle.id }) {
+                    touchParticles[index].opacity = 0
+                    touchParticles[index].scale = 0.3
+                    touchParticles[index].position.y -= 20
+                }
+            }
+        }
+        
+        // Clean up particles
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            touchParticles.removeAll { particle in
+                particle.opacity <= 0.1
+            }
+        }
+    }
+}
+
+struct DrawingPath: Identifiable {
+    let id = UUID()
+    let points: [CGPoint]
+    let color: Color
+    let width: CGFloat
+}
+
+struct CanvasTouchParticle: Identifiable {
+    let id = UUID()
+    var position: CGPoint
+    var size: CGFloat
+    var color: Color
+    var opacity: Double
+    var scale: CGFloat
 }
 
 // MARK: - Ember Gesture Library Sheet
@@ -243,10 +337,14 @@ struct EmberGestureLibrarySheet: View {
                 ScrollView {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
                         ForEach(Array(gestures.enumerated()), id: \.offset) { index, gesture in
-                            Button(action: {
-                                EmberHapticsManager.shared.playSuccess()
-                                dismiss()
-                            }) {
+                            InteractiveButton(
+                                hapticType: .press,
+                                style: .gentle,
+                                action: {
+                                    EmberHapticsManager.shared.playSuccess()
+                                    dismiss()
+                                }
+                            ) {
                                 VStack(spacing: 16) {
                                     ZStack {
                                         Circle()
@@ -275,7 +373,6 @@ struct EmberGestureLibrarySheet: View {
                                         .stroke(.white.opacity(0.1), lineWidth: 1)
                                 )
                             }
-                            .buttonStyle(.plain)
                         }
                     }
                     .emberScreenPadding()

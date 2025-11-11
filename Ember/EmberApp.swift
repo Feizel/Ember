@@ -1,74 +1,251 @@
-//
-//  EmberApp.swift
-//  Ember - Premium Couple Connection App
-//
-//  Created by Feizel Maduna on 2025/11/04.
-//
-
 import SwiftUI
-import CoreData
+import Combine 
 
 @main
 struct EmberApp: App {
-    let persistenceController = EmberPersistenceController.shared
-    @StateObject private var authManager = EmberAuthManager.shared
-    @StateObject private var touchRepository = EmberTouchRepository.shared
-    @StateObject private var streakManager = EmberStreakManager.shared
-    @StateObject private var hapticsManager = EmberHapticsManager.shared
-    @StateObject private var notificationManager = EmberNotificationManager.shared
+    @StateObject private var appState = AppState()
     
-    init() {
-        // Initialize premium design system
-        setupPremiumDesignSystem()
-    }
-
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(authManager)
-                .environmentObject(touchRepository)
-                .environmentObject(streakManager)
-                .environmentObject(hapticsManager)
-                .environmentObject(notificationManager)
-                .preferredColorScheme(.light) // Force light mode for premium look
+            AppContentView()
+                .environmentObject(appState)
                 .onAppear {
-                    Task {
-                        await notificationManager.requestPermission()
-                    }
+                    setupApp()
                 }
         }
     }
     
-    // MARK: - Premium Design System Setup
-    private func setupPremiumDesignSystem() {
-        // Configure navigation bar appearance
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.configureWithTransparentBackground()
-        navBarAppearance.backgroundColor = UIColor.clear
-        navBarAppearance.titleTextAttributes = [
-            .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: 18, weight: .semibold)
-        ]
-        navBarAppearance.largeTitleTextAttributes = [
-            .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
-        ]
+    private func setupApp() {
+        // Initialize haptics engine
+        EmberHapticsManager.shared.prepareEngine()
         
-        UINavigationBar.appearance().standardAppearance = navBarAppearance
-        UINavigationBar.appearance().compactAppearance = navBarAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+        // Setup audio session
+        setupAudioSession()
         
-        // Configure tab bar appearance
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithOpaqueBackground()
-        tabBarAppearance.backgroundColor = UIColor.white
-        tabBarAppearance.shadowColor = UIColor.black.withAlphaComponent(0.1)
-        
-        UITabBar.appearance().standardAppearance = tabBarAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-        
-        // Configure overall app tint
-        UIView.appearance().tintColor = UIColor(EmberColors.roseQuartz)
+        // Configure appearance
+        configureAppearance()
     }
+    
+    private func setupAudioSession() {
+        // Configure audio session for multimodal feedback
+        // This would use AVAudioSession configuration from the spec
+    }
+    
+    private func configureAppearance() {
+        // Configure navigation bar and tab bar appearance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemBackground
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+}
+
+// MARK: - App Content View
+struct AppContentView: View {
+    @EnvironmentObject var appState: AppState
+    
+    var body: some View {
+        Group {
+            if appState.isFirstLaunch {
+                EmberSplashScreen {
+                    appState.completeFirstLaunch()
+                }
+            } else if !appState.hasCompletedOnboarding {
+                OnboardingFlowView {
+                    appState.completeOnboarding()
+                }
+            } else if !appState.hasCompletedIntro {
+                EmberGamefiedIntroView {
+                    appState.completeIntro()
+                }
+            } else {
+                MainTabView()
+            }
+        }
+        .animation(.easeInOut(duration: 0.5), value: appState.currentFlow)
+    }
+}
+
+// MARK: - Main Tab View
+struct MainTabView: View {
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            EmberHomeView()
+                .tabItem {
+                    Image(systemName: "house.fill")
+                    Text("Home")
+                }
+                .tag(0)
+            
+            EmberMemoriesView()
+                .tabItem {
+                    Image(systemName: "heart.circle.fill")
+                    Text("Memories")
+                }
+                .tag(1)
+            
+            EmberTouchView()
+                .tabItem {
+                    Image(systemName: "hand.draw.fill")
+                    Text("Touch")
+                }
+                .tag(2)
+            
+            EmberProfileView()
+                .tabItem {
+                    Image(systemName: "person.fill")
+                    Text("Profile")
+                }
+                .tag(3)
+        }
+        .accentColor(EmberColors.roseQuartz)
+    }
+}
+
+// MARK: - App State
+@MainActor
+class AppState: ObservableObject {
+    @Published var isFirstLaunch = true
+    @Published var hasCompletedOnboarding = false
+    @Published var hasCompletedIntro = false
+    @Published var currentFlow: AppFlow = .splash
+    
+    enum AppFlow {
+        case splash, onboarding, intro, main
+    }
+    
+    init() {
+        loadAppState()
+    }
+    
+    private func loadAppState() {
+        // Load from UserDefaults or other persistence
+        isFirstLaunch = !UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
+        hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        hasCompletedIntro = UserDefaults.standard.bool(forKey: "hasCompletedIntro")
+        
+        if isFirstLaunch {
+            currentFlow = .splash
+        } else if !hasCompletedOnboarding {
+            currentFlow = .onboarding
+        } else if !hasCompletedIntro {
+            currentFlow = .intro
+        } else {
+            currentFlow = .main
+        }
+    }
+    
+    func completeFirstLaunch() {
+        UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+        isFirstLaunch = false
+        currentFlow = .onboarding
+    }
+    
+    func completeOnboarding() {
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        hasCompletedOnboarding = true
+        currentFlow = .intro
+    }
+    
+    func completeIntro() {
+        UserDefaults.standard.set(true, forKey: "hasCompletedIntro")
+        hasCompletedIntro = true
+        currentFlow = .main
+    }
+}
+
+// MARK: - Placeholder Views
+struct PlaceholderMemoriesView: View {
+    var body: some View {
+        NavigationView {
+            ZStack {
+                EmberColors.backgroundPrimary.ignoresSafeArea()
+                
+                VStack(spacing: 24) {
+                    Text("Memories")
+                        .emberTitleLarge()
+                    
+                    Text("Your shared moments will appear here")
+                        .emberBody(color: EmberColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+                .emberScreenPadding()
+            }
+            .navigationTitle("Memories")
+            .navigationBarTitleDisplayMode(.large)
+        }
+    }
+}
+
+struct PlaceholderProfileView: View {
+    var body: some View {
+        NavigationView {
+            ZStack {
+                EmberColors.backgroundPrimary.ignoresSafeArea()
+                
+                VStack(spacing: 24) {
+                    // Profile avatar
+                    Circle()
+                        .fill(EmberColors.primaryGradient)
+                        .frame(width: 120, height: 120)
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 60))
+                                .foregroundStyle(.white)
+                        )
+                    
+                    VStack(spacing: 8) {
+                        Text("Your Profile")
+                            .emberTitleLarge()
+                        
+                        Text("Customize your Ember experience")
+                            .emberBody(color: EmberColors.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                    // Profile options
+                    VStack(spacing: 16) {
+                        profileOption("Character Customization", icon: "paintbrush.fill")
+                        profileOption("Relationship Settings", icon: "heart.fill")
+                        profileOption("Notifications", icon: "bell.fill")
+                        profileOption("Privacy & Security", icon: "lock.fill")
+                        profileOption("Support", icon: "questionmark.circle.fill")
+                    }
+                    
+                    Spacer()
+                }
+                .emberScreenPadding()
+            }
+            .navigationTitle("Profile")
+            .navigationBarTitleDisplayMode(.large)
+        }
+    }
+    
+    private func profileOption(_ title: String, icon: String) -> some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .emberIconMedium()
+                .foregroundStyle(EmberColors.roseQuartz)
+                .frame(width: 24)
+            
+            Text(title)
+                .emberHeadline()
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .emberIconSmall()
+                .foregroundStyle(EmberColors.textSecondary)
+        }
+        .emberCardPadding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+#Preview {
+    AppContentView()
+        .environmentObject(AppState())
 }

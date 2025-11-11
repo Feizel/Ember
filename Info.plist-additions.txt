@@ -1,0 +1,49 @@
+<!-- Add these entries to your Info.plist file -->
+
+<!-- Notification Usage -->
+<key>NSUserNotificationUsageDescription</key>
+<string>Ember needs notification permission to alert you when your partner sends a touch or message.</string>
+
+<!-- Microphone Usage (for voice messages) -->
+<key>NSMicrophoneUsageDescription</key>
+<string>Ember uses the microphone to record voice messages for your partner.</string>
+
+<!-- Camera Usage (for QR code scanning) -->
+<key>NSCameraUsageDescription</key>
+<string>Ember uses the camera to scan QR codes for partner connection.</string>
+
+<!-- Location Usage (for location sharing feature) -->
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Ember can share your location with your partner when you choose to.</string>
+
+<!-- Background Modes -->
+<key>UIBackgroundModes</key>
+<array>
+    <string>background-processing</string>
+    <string>remote-notification</string>
+</array>
+
+<!-- Haptics Support -->
+<key>UIRequiredDeviceCapabilities</key>
+<array>
+    <string>armv7</string>
+</array>
+
+<!-- App Transport Security -->
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <false/>
+</dict>
+
+<!-- Supported Interface Orientations -->
+<key>UISupportedInterfaceOrientations</key>
+<array>
+    <string>UIInterfaceOrientationPortrait</string>
+</array>
+
+<!-- Status Bar Style -->
+<key>UIStatusBarStyle</key>
+<string>UIStatusBarStyleLightContent</string>
+<key>UIViewControllerBasedStatusBarAppearance</key>
+<false/>

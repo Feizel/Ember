@@ -14,7 +14,15 @@ class EmberHapticsManager: ObservableObject {
         CHHapticEngine.capabilitiesForHardware().supportsHaptics
     }
     
+    var isHapticsAvailable: Bool {
+        supportsHaptics
+    }
+    
     init() {
+        setupEngine()
+    }
+    
+    func prepareEngine() {
         setupEngine()
     }
     
@@ -82,6 +90,42 @@ class EmberHapticsManager: ObservableObject {
         guard UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true else { return }
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
+    }
+    
+    func playHeavy() {
+        guard UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true else { return }
+        let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
+        impactFeedback.impactOccurred()
+    }
+    
+    func playSelection() {
+        guard UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true else { return }
+        let selectionFeedback = UISelectionFeedbackGenerator()
+        selectionFeedback.selectionChanged()
+    }
+    
+    func playRealtimeTouch(intensity: Float, sharpness: Float = 0.5) {
+        guard let engine = engine else { return }
+        guard UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true else { return }
+        
+        do {
+            let event = CHHapticEvent(
+                eventType: .hapticContinuous,
+                parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: intensity),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: sharpness)
+                ],
+                relativeTime: 0,
+                duration: 0.1
+            )
+            
+            let pattern = try CHHapticPattern(events: [event], parameters: [])
+            let player = try engine.makePlayer(with: pattern)
+            try player.start(atTime: 0)
+            
+        } catch {
+            print("Failed to play realtime haptic: \(error)")
+        }
     }
     
     func playSuccess() {
@@ -160,7 +204,66 @@ struct HapticGesture {
         icon: "hands.sparkles.fill"
     )
     
-    static let allGestures = [kiss, hug]
+    static let heartbeat = HapticGesture(
+        name: "Heartbeat",
+        events: [
+            HapticEvent(time: 0.0, type: .hapticTransient, intensity: 0.6, sharpness: 0.3, duration: 0.1),
+            HapticEvent(time: 0.15, type: .hapticTransient, intensity: 0.8, sharpness: 0.4, duration: 0.1),
+            HapticEvent(time: 0.8, type: .hapticTransient, intensity: 0.6, sharpness: 0.3, duration: 0.1),
+            HapticEvent(time: 0.95, type: .hapticTransient, intensity: 0.8, sharpness: 0.4, duration: 0.1)
+        ],
+        duration: 1.5,
+        icon: "heart.fill"
+    )
+    
+    static let wave = HapticGesture(
+        name: "Wave",
+        events: [
+            HapticEvent(time: 0.0, type: .hapticContinuous, intensity: 0.3, sharpness: 0.2, duration: 0.3),
+            HapticEvent(time: 0.2, type: .hapticContinuous, intensity: 0.6, sharpness: 0.4, duration: 0.3),
+            HapticEvent(time: 0.4, type: .hapticContinuous, intensity: 0.9, sharpness: 0.6, duration: 0.3),
+            HapticEvent(time: 0.6, type: .hapticContinuous, intensity: 0.6, sharpness: 0.4, duration: 0.3),
+            HapticEvent(time: 0.8, type: .hapticContinuous, intensity: 0.3, sharpness: 0.2, duration: 0.3)
+        ],
+        duration: 1.2,
+        icon: "waveform"
+    )
+    
+    static let sparkle = HapticGesture(
+        name: "Sparkle",
+        events: [
+            HapticEvent(time: 0.0, type: .hapticTransient, intensity: 0.4, sharpness: 0.8, duration: 0.05),
+            HapticEvent(time: 0.1, type: .hapticTransient, intensity: 0.6, sharpness: 0.9, duration: 0.05),
+            HapticEvent(time: 0.25, type: .hapticTransient, intensity: 0.5, sharpness: 0.85, duration: 0.05),
+            HapticEvent(time: 0.4, type: .hapticTransient, intensity: 0.7, sharpness: 0.95, duration: 0.05),
+            HapticEvent(time: 0.6, type: .hapticTransient, intensity: 0.8, sharpness: 1.0, duration: 0.05)
+        ],
+        duration: 0.8,
+        icon: "sparkles"
+    )
+    
+    static let pulse = HapticGesture(
+        name: "Pulse",
+        events: [
+            HapticEvent(time: 0.0, type: .hapticContinuous, intensity: 0.8, sharpness: 0.5, duration: 0.2),
+            HapticEvent(time: 0.3, type: .hapticContinuous, intensity: 0.9, sharpness: 0.6, duration: 0.2),
+            HapticEvent(time: 0.6, type: .hapticContinuous, intensity: 1.0, sharpness: 0.7, duration: 0.2)
+        ],
+        duration: 1.0,
+        icon: "bolt.fill"
+    )
+    
+    static let loveTap = HapticGesture(
+        name: "Love Tap",
+        events: [
+            HapticEvent(time: 0.0, type: .hapticTransient, intensity: 0.7, sharpness: 0.6, duration: 0.1),
+            HapticEvent(time: 0.1, type: .hapticTransient, intensity: 0.5, sharpness: 0.4, duration: 0.1)
+        ],
+        duration: 0.2,
+        icon: "hand.tap.fill"
+    )
+    
+    static let allGestures = [kiss, hug, heartbeat, wave, sparkle, pulse, loveTap]
 }
 
 struct HapticEvent {

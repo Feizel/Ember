@@ -33,12 +33,18 @@ struct EmberMemoriesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "heart.text.square.fill")
-                            .font(.system(size: 16))
-                        Text("Memories")
+                    VStack(spacing: 2) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "heart.text.square.fill")
+                                .font(.system(size: 16))
+                            Text("Love Memories")
+                        }
+                        .emberHeadline(color: EmberColors.textOnGradient)
+                        
+                        Text("Your story together")
+                            .font(.caption2)
+                            .foregroundStyle(EmberColors.textOnGradient.opacity(0.7))
                     }
-                    .emberHeadline(color: EmberColors.textOnGradient)
                 }
             }
             .toolbarBackground(EmberColors.headerGradient, for: .navigationBar)
@@ -74,13 +80,34 @@ struct EmberMemoriesView: View {
                 .fill(EmberColors.roseQuartz.opacity(0.1))
                 .frame(height: 200)
                 .overlay(
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo.on.rectangle.angled")
-                            .font(.system(size: 40))
-                            .foregroundStyle(EmberColors.roseQuartz.opacity(0.6))
+                    VStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(EmberColors.roseQuartz.opacity(0.2))
+                                .frame(width: 80, height: 80)
+                                .blur(radius: 8)
+                            
+                            Image(systemName: "photo.on.rectangle.angled")
+                                .font(.system(size: 40, weight: .light))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [EmberColors.roseQuartz, EmberColors.peachyKeen],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        }
                         
-                        Text("Your latest memory")
-                            .emberBody(color: EmberColors.textSecondary)
+                        VStack(spacing: 4) {
+                            Text("Your Latest Love Story")
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(EmberColors.textPrimary)
+                            
+                            Text("Every moment with you is precious")
+                                .font(.caption)
+                                .foregroundStyle(EmberColors.textSecondary)
+                                .multilineTextAlignment(.center)
+                        }
                     }
                 )
             
@@ -88,10 +115,19 @@ struct EmberMemoriesView: View {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Coffee Date")
-                            .emberHeadline()
-                        Text("Yesterday • Shared by Alex")
-                            .emberCaption(color: EmberColors.textSecondary)
+                        Text("Perfect Coffee Date ☕️")
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(EmberColors.textPrimary)
+                        
+                        HStack(spacing: 8) {
+                            Image(systemName: "heart.fill")
+                                .font(.caption2)
+                                .foregroundStyle(EmberColors.roseQuartz)
+                            
+                            Text("Yesterday • Shared with love by Alex")
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(EmberColors.textSecondary)
+                        }
                     }
                     
                     Spacer()
@@ -105,9 +141,21 @@ struct EmberMemoriesView: View {
                     }
                 }
                 
-                Text("\"Perfect morning with my favorite person ☕️💕\"")
-                    .emberBody(color: EmberColors.textSecondary)
-                    .italic()
+                VStack(spacing: 8) {
+                    Text("\"Perfect morning with my favorite person ☕️💕\"")
+                        .font(.subheadline.italic())
+                        .foregroundStyle(EmberColors.textSecondary)
+                        .multilineTextAlignment(.leading)
+                    
+                    HStack {
+                        ForEach(0..<5) { _ in
+                            Image(systemName: "heart.fill")
+                                .font(.system(size: 6))
+                                .foregroundStyle(EmberColors.roseQuartz.opacity(0.6))
+                        }
+                        Spacer()
+                    }
+                }
             }
             .padding(20)
             .background(EmberColors.surface)
@@ -119,8 +167,15 @@ struct EmberMemoriesView: View {
     // MARK: - Quick Capture Section
     private var quickCaptureSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Capture This Moment")
-                .emberHeadline()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Capture Your Love")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(EmberColors.textPrimary)
+                
+                Text("Save this beautiful moment forever")
+                    .font(.caption)
+                    .foregroundStyle(EmberColors.textSecondary)
+            }
             
             HStack(spacing: 12) {
                 quickCaptureButton(
@@ -192,30 +247,37 @@ struct EmberMemoriesView: View {
     // MARK: - Memory Collections Section
     private var memoryCollectionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Your Collections")
-                .emberHeadline()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Your Love Story")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(EmberColors.textPrimary)
+                
+                Text("All your precious moments together")
+                    .font(.caption)
+                    .foregroundStyle(EmberColors.textSecondary)
+            }
             
             VStack(spacing: 12) {
                 memoryCollectionRow(
                     icon: "photo.stack.fill",
-                    title: "Photo Gallery",
-                    subtitle: "247 photos • Last added 2h ago",
+                    title: "Love Gallery",
+                    subtitle: "247 precious photos • Last smile 2h ago",
                     color: EmberColors.roseQuartz,
                     action: { showingMemoryGallery = true }
                 )
                 
                 memoryCollectionRow(
                     icon: "book.closed.fill",
-                    title: "Memory Journal",
-                    subtitle: "32 entries • Private thoughts",
+                    title: "Heart Journal",
+                    subtitle: "32 love entries • Your secret thoughts",
                     color: EmberColors.peachyKeen,
                     action: { showingMemoryJournal = true }
                 )
                 
                 memoryCollectionRow(
                     icon: "star.fill",
-                    title: "Milestones",
-                    subtitle: "12 special moments • Premium",
+                    title: "Love Milestones",
+                    subtitle: "12 magical moments • Premium memories",
                     color: EmberColors.coralPop,
                     action: { showingMemoryMilestones = true },
                     isPremium: true
@@ -223,8 +285,8 @@ struct EmberMemoriesView: View {
                 
                 memoryCollectionRow(
                     icon: "timeline.selection",
-                    title: "Timeline View",
-                    subtitle: "89 days together • Chronological",
+                    title: "Love Timeline",
+                    subtitle: "89 beautiful days • Your journey together",
                     color: EmberColors.lavenderMist,
                     action: { showingMemoryTimeline = true }
                 )
@@ -277,8 +339,15 @@ struct EmberMemoriesView: View {
     private var recentMemoriesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("Recent Memories")
-                    .emberHeadline()
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Recent Love Moments")
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(EmberColors.textPrimary)
+                    
+                    Text("Your latest beautiful memories")
+                        .font(.caption)
+                        .foregroundStyle(EmberColors.textSecondary)
+                }
                 Spacer()
                 Button("See All") {
                     showingMemoryTimeline = true
@@ -296,9 +365,9 @@ struct EmberMemoriesView: View {
     
     private func recentMemoryRow(index: Int) -> some View {
         let memories = [
-            ("Sunset Walk", "Beautiful evening together", "2h ago", "figure.walk"),
-            ("Love Note", "Missing you today 💕", "Yesterday", "heart.text.square"),
-            ("Dinner Date", "Amazing pasta night", "2 days ago", "fork.knife")
+            ("Romantic Sunset Walk", "Beautiful evening stroll together 🌅", "2h ago", "figure.walk"),
+            ("Sweet Love Note", "Missing you today 💕 Can't wait to hold you", "Yesterday", "heart.text.square"),
+            ("Cozy Dinner Date", "Amazing pasta night with my favorite person 🍝", "2 days ago", "fork.knife")
         ]
         
         let memory = memories[index]
@@ -339,14 +408,14 @@ struct EmberMemoriesView: View {
             HStack(spacing: 16) {
                 insightCard(
                     value: "89",
-                    label: "Days Together",
+                    label: "Days in Love",
                     icon: "calendar.badge.clock",
                     color: EmberColors.roseQuartz
                 )
                 
                 insightCard(
                     value: "247",
-                    label: "Memories",
+                    label: "Love Memories",
                     icon: "heart.fill",
                     color: EmberColors.peachyKeen
                 )
@@ -362,7 +431,7 @@ struct EmberMemoriesView: View {
                 
                 insightCard(
                     value: "12",
-                    label: "Milestones",
+                    label: "Love Milestones",
                     icon: "star.fill",
                     color: EmberColors.lavenderMist
                 )

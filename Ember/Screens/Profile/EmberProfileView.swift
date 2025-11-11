@@ -46,12 +46,18 @@ struct EmberProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 16))
-                        Text("Personal")
+                    VStack(spacing: 2) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 16))
+                            Text("Your Love Profile")
+                        }
+                        .emberHeadline(color: EmberColors.textOnGradient)
+                        
+                        Text("Customize your romantic journey")
+                            .font(.caption2)
+                            .foregroundStyle(EmberColors.textOnGradient.opacity(0.7))
                     }
-                    .emberHeadline(color: EmberColors.textOnGradient)
                 }
             }
             .toolbarBackground(EmberColors.headerGradient, for: .navigationBar)
@@ -99,14 +105,10 @@ struct EmberProfileView: View {
                 // Avatar and Connection Status
                 HStack(spacing: 16) {
                     ZStack {
-                        Circle()
-                            .fill(EmberColors.roseQuartz.opacity(0.1))
-                            .frame(width: 80, height: 80)
-                        
-                        EmberCharacterView(
+                        // Use simple 3D-like character
+                        EmberSimple3DCharacters(
                             character: .touchy,
-                            size: 60,
-                            expression: .happy,
+                            size: 80,
                             isAnimating: true
                         )
                         
@@ -127,19 +129,38 @@ struct EmberProfileView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Sarah & Alex")
-                            .emberHeadline()
-                        
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(.green)
-                                .frame(width: 8, height: 8)
-                            Text("Connected")
-                                .emberBody(color: EmberColors.success)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Sarah & Alex")
+                                .font(.title2.weight(.bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [EmberColors.roseQuartz, EmberColors.peachyKeen],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                            
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(.green)
+                                    .frame(width: 8, height: 8)
+                                    .scaleEffect(1.2)
+                                
+                                Text("Deeply Connected")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(.green)
+                            }
+                            
+                            HStack(spacing: 6) {
+                                Image(systemName: "heart.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(EmberColors.roseQuartz)
+                                
+                                Text("89 beautiful days together")
+                                    .font(.caption.weight(.medium))
+                                    .foregroundStyle(EmberColors.textSecondary)
+                            }
                         }
-                        
-                        Text("Together for 89 days")
-                            .emberCaption(color: EmberColors.textSecondary)
                         
                         Button(action: {
                             showingProfileEdit = true
@@ -154,9 +175,9 @@ struct EmberProfileView: View {
                 
                 // Stats Row
                 HStack(spacing: 24) {
-                    statItem(value: "1,247", label: "Touches", icon: "hand.tap.fill")
-                    statItem(value: "47", label: "Day Streak", icon: "flame.fill")
-                    statItem(value: "247", label: "Memories", icon: "heart.fill")
+                    statItem(value: "1,247", label: "Love Touches", icon: "hand.tap.fill")
+                    statItem(value: "47", label: "Love Streak", icon: "flame.fill")
+                    statItem(value: "247", label: "Sweet Memories", icon: "heart.fill")
                 }
             }
             .padding(20)
@@ -184,34 +205,41 @@ struct EmberProfileView: View {
     // MARK: - Quick Actions Section
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Quick Actions")
-                .emberHeadline()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Express Yourself")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(EmberColors.textPrimary)
+                
+                Text("Customize your love experience")
+                    .font(.caption)
+                    .foregroundStyle(EmberColors.textSecondary)
+            }
             
             HStack(spacing: 12) {
                 quickActionButton(
                     icon: "person.2.fill",
-                    title: "Characters",
+                    title: "Love Avatars",
                     color: EmberColors.roseQuartz,
                     action: { showingCharacterCustomization = true }
                 )
                 
                 quickActionButton(
                     icon: "crown.fill",
-                    title: "Premium",
+                    title: "Premium Love",
                     color: .yellow,
                     action: { showingPremium = true }
                 )
                 
                 quickActionButton(
                     icon: "bell.fill",
-                    title: "Notifications",
+                    title: "Love Alerts",
                     color: EmberColors.peachyKeen,
                     action: { showingNotificationSettings = true }
                 )
                 
                 quickActionButton(
                     icon: "gear",
-                    title: "Settings",
+                    title: "Love Settings",
                     color: EmberColors.coralPop,
                     action: { showingPreferences = true }
                 )
@@ -244,8 +272,15 @@ struct EmberProfileView: View {
     private var charactersSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("Your Characters")
-                    .emberHeadline()
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Your Love Avatars")
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(EmberColors.textPrimary)
+                    
+                    Text("Choose how you appear to your love")
+                        .font(.caption)
+                        .foregroundStyle(EmberColors.textSecondary)
+                }
                 Spacer()
                 Button("Customize") {
                     showingCharacterCustomization = true
@@ -271,15 +306,11 @@ struct EmberProfileView: View {
         }) {
             VStack(spacing: 12) {
                 ZStack {
-                    Circle()
-                        .fill(EmberColors.roseQuartz.opacity(0.1))
-                        .frame(width: 60, height: 60)
-                    
-                    EmberCharacterView(
+                    // Use simple 3D-like character
+                    EmberSimple3DCharacters(
                         character: character,
-                        size: 45,
-                        expression: .happy,
-                        isAnimating: true
+                        size: 60,
+                        isAnimating: isSelected
                     )
                     
                     if isSelected {
@@ -319,30 +350,37 @@ struct EmberProfileView: View {
     // MARK: - Account Section
     private var accountSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Account & Connection")
-                .emberHeadline()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Love Connection")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(EmberColors.textPrimary)
+                
+                Text("Manage your romantic bond")
+                    .font(.caption)
+                    .foregroundStyle(EmberColors.textSecondary)
+            }
             
             VStack(spacing: 12) {
                 settingsRow(
                     icon: "person.fill",
-                    title: "Edit Profile",
-                    subtitle: "Update your information",
+                    title: "Edit Love Profile",
+                    subtitle: "Update your romantic information",
                     color: EmberColors.roseQuartz,
                     action: { showingProfileEdit = true }
                 )
                 
                 settingsRow(
                     icon: "link",
-                    title: "Partner Connection",
-                    subtitle: "Manage your connection with Alex",
+                    title: "Heart Connection",
+                    subtitle: "Manage your bond with Alex 💕",
                     color: EmberColors.peachyKeen,
                     action: { showingPartnerConnection = true }
                 )
                 
                 settingsRow(
                     icon: "crown.fill",
-                    title: "Premium",
-                    subtitle: "Unlock exclusive features",
+                    title: "Premium Love Experience",
+                    subtitle: "Unlock exclusive romantic features",
                     color: .yellow,
                     action: { showingPremium = true },
                     showBadge: true
@@ -354,30 +392,37 @@ struct EmberProfileView: View {
     // MARK: - App Settings Section
     private var appSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("App Settings")
-                .emberHeadline()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Love Experience")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(EmberColors.textPrimary)
+                
+                Text("Customize how love feels")
+                    .font(.caption)
+                    .foregroundStyle(EmberColors.textSecondary)
+            }
             
             VStack(spacing: 12) {
                 settingsRow(
                     icon: "bell.fill",
-                    title: "Notifications",
-                    subtitle: "Touch alerts and reminders",
+                    title: "Love Notifications",
+                    subtitle: "Sweet alerts and romantic reminders",
                     color: EmberColors.coralPop,
                     action: { showingNotificationSettings = true }
                 )
                 
                 settingsRow(
                     icon: "paintbrush.fill",
-                    title: "Themes & Appearance",
-                    subtitle: "Customize your app look",
+                    title: "Love Themes",
+                    subtitle: "Make your app as beautiful as your love",
                     color: EmberColors.lavenderMist,
                     action: { showingThemes = true }
                 )
                 
                 settingsRow(
                     icon: "slider.horizontal.3",
-                    title: "Preferences",
-                    subtitle: "App behavior and features",
+                    title: "Love Preferences",
+                    subtitle: "Personalize your romantic experience",
                     color: EmberColors.peachyKeen,
                     action: { showingPreferences = true }
                 )
@@ -387,16 +432,16 @@ struct EmberProfileView: View {
             VStack(spacing: 12) {
                 toggleRow(
                     icon: "speaker.wave.2.fill",
-                    title: "Sound Effects",
-                    subtitle: "Play sounds for interactions",
+                    title: "Love Sounds",
+                    subtitle: "Hear the magic of your connection",
                     color: EmberColors.coralPop,
                     isOn: $soundEnabled
                 )
                 
                 toggleRow(
                     icon: "iphone.radiowaves.left.and.right",
-                    title: "Haptic Feedback",
-                    subtitle: "Feel vibrations for touches",
+                    title: "Feel Every Touch",
+                    subtitle: "Experience your partner's love through haptics",
                     color: EmberColors.roseQuartz,
                     isOn: $hapticFeedback
                 )
@@ -407,22 +452,29 @@ struct EmberProfileView: View {
     // MARK: - Support Section
     private var supportSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Support & Info")
-                .emberHeadline()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Love Support")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(EmberColors.textPrimary)
+                
+                Text("We're here to help your love grow")
+                    .font(.caption)
+                    .foregroundStyle(EmberColors.textSecondary)
+            }
             
             VStack(spacing: 12) {
                 settingsRow(
                     icon: "questionmark.circle.fill",
-                    title: "Help & Support",
-                    subtitle: "Get help and contact us",
+                    title: "Love Help & Support",
+                    subtitle: "Get help with your romantic journey",
                     color: EmberColors.peachyKeen,
                     action: { showingSupport = true }
                 )
                 
                 settingsRow(
                     icon: "lock.shield.fill",
-                    title: "Privacy & Security",
-                    subtitle: "Your data and privacy settings",
+                    title: "Love Privacy & Security",
+                    subtitle: "Keep your intimate moments safe",
                     color: EmberColors.lavenderMist,
                     action: { showingPrivacy = true }
                 )
@@ -436,10 +488,13 @@ struct EmberProfileView: View {
                             .frame(width: 44, height: 44)
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("App Version")
-                                .emberLabel()
-                            Text("Ember v1.0.0 (Build 1)")
-                                .emberCaption(color: EmberColors.textSecondary)
+                            Text("Ember Love App")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(EmberColors.textPrimary)
+                            
+                            Text("v1.0.0 - Spreading love through touch 💕")
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(EmberColors.textSecondary)
                         }
                     }
                     

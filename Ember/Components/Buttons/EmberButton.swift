@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Ember Button Component
+// MARK: - Ember Button Component with Micro-interactions
 struct EmberButton: View {
     let title: String
     let style: ButtonStyle
@@ -9,7 +9,6 @@ struct EmberButton: View {
     
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
-    @State private var isPressed = false
     
     init(_ title: String, style: ButtonStyle = .primary, size: ButtonSize = .medium, action: @escaping () -> Void) {
         self.title = title
@@ -19,7 +18,11 @@ struct EmberButton: View {
     }
     
     var body: some View {
-        Button(action: action) {
+        InteractiveButton(
+            hapticType: .touch,
+            style: .standard,
+            action: action
+        ) {
             HStack(spacing: size.iconSpacing) {
                 Text(title)
                     .font(size.font)
@@ -31,15 +34,9 @@ struct EmberButton: View {
             .background(backgroundView)
             .overlay(overlayView)
             .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius))
-            .scaleEffect(isPressed ? 0.95 : 1.0)
             .opacity(isEnabled ? 1.0 : 0.6)
         }
-        .buttonStyle(PlainButtonStyle())
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isPressed = pressing
-            }
-        }, perform: {})
+        .disabled(!isEnabled)
     }
     
     private var textColor: Color {
@@ -126,7 +123,7 @@ extension EmberButton {
     }
 }
 
-// MARK: - Icon Button Variant
+// MARK: - Icon Button Variant with Micro-interactions
 struct EmberIconButton: View {
     let icon: String
     let title: String?
@@ -136,7 +133,6 @@ struct EmberIconButton: View {
     
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
-    @State private var isPressed = false
     
     init(icon: String, title: String? = nil, style: EmberButton.ButtonStyle = .primary, size: EmberButton.ButtonSize = .medium, action: @escaping () -> Void) {
         self.icon = icon
@@ -147,7 +143,11 @@ struct EmberIconButton: View {
     }
     
     var body: some View {
-        Button(action: action) {
+        InteractiveButton(
+            hapticType: .touch,
+            style: .gentle,
+            action: action
+        ) {
             HStack(spacing: size.iconSpacing) {
                 Image(systemName: icon)
                     .font(.system(size: iconSize, weight: .medium))
@@ -164,15 +164,9 @@ struct EmberIconButton: View {
             .background(backgroundView)
             .overlay(overlayView)
             .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius))
-            .scaleEffect(isPressed ? 0.95 : 1.0)
             .opacity(isEnabled ? 1.0 : 0.6)
         }
-        .buttonStyle(PlainButtonStyle())
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isPressed = pressing
-            }
-        }, perform: {})
+        .disabled(!isEnabled)
     }
     
     private var iconSize: CGFloat {
@@ -220,15 +214,17 @@ struct EmberIconButton: View {
     }
 }
 
-// MARK: - Floating Action Button
+// MARK: - Floating Action Button with Micro-interactions
 struct EmberFloatingActionButton: View {
     let icon: String
     let action: () -> Void
     
-    @State private var isPressed = false
-    
     var body: some View {
-        Button(action: action) {
+        InteractiveButton(
+            hapticType: .press,
+            style: .intense,
+            action: action
+        ) {
             Image(systemName: icon)
                 .font(.system(size: 28, weight: .medium))
                 .foregroundColor(EmberColors.textOnGradient)
@@ -236,14 +232,16 @@ struct EmberFloatingActionButton: View {
                 .background(EmberColors.primaryGradient)
                 .clipShape(Circle())
                 .shadow(color: EmberColors.roseQuartz.opacity(0.3), radius: 8, x: 0, y: 4)
-                .scaleEffect(isPressed ? 0.9 : 1.0)
         }
-        .buttonStyle(PlainButtonStyle())
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                isPressed = pressing
-            }
-        }, perform: {})
+    }
+}
+
+// MARK: - Button Styles
+struct EmberPressableButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 

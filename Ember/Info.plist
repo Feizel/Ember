@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Privacy Usage Descriptions -->
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Ember needs notification permission to alert you when your partner sends a touch or message.</string>
+	
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Ember uses the microphone to record voice messages for your partner.</string>
+	
+	<key>NSCameraUsageDescription</key>
+	<string>Ember uses the camera to scan QR codes for partner connection.</string>
+	
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Ember can share your location with your partner when you choose to.</string>
+	
+	<!-- Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>remote-notification</string>
+	</array>
+	
+	<!-- App Configuration -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+	
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	
+	<!-- App Transport Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+	</dict>
+</dict>
+</plist>

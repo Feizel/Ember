@@ -14,16 +14,25 @@ struct EmberCharacterCustomizationView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Interactive Character Preview
-                EmberInteractiveCharacterPreview(
-                    character: selectedCharacter,
-                    theme: selectedTheme,
-                    expression: selectedExpression,
-                    accessory: selectedAccessory,
-                    isCharacterTouched: $isCharacterTouched,
-                    heartParticles: $heartParticles,
-                    showingPartnerReaction: $showingPartnerReaction
-                )
+                // 3D Character Showcase
+                VStack(spacing: 0) {
+                    // Background gradient
+                    LinearGradient(
+                        colors: selectedTheme.colors + [selectedTheme.colors.first?.opacity(0.3) ?? .clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .frame(height: 300)
+                    .overlay(
+                        Ember3DCharacterShowcase(
+                            size: 200,
+                            isAnimating: true,
+                            showControls: false
+                        )
+                        .padding(.top, 40)
+                    )
+                    .ignoresSafeArea(edges: .top)
+                }
                 
                 // Customization Controls
                 ScrollView {
@@ -221,10 +230,9 @@ struct EmberCharacterSelector: View {
                         EmberHapticsManager.shared.playLight()
                     }) {
                         VStack(spacing: 8) {
-                            EmberCharacterView(
+                            Ember3DCharacters(
                                 character: character,
                                 size: 50,
-                                expression: .happy,
                                 isAnimating: selectedCharacter == character
                             )
                             

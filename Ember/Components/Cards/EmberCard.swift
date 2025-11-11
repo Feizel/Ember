@@ -28,14 +28,12 @@ struct EmberCard<Content: View>: View {
         case .normal:
             EmberColors.adaptiveSurface(for: colorScheme)
         case .elevated:
-            EmberColors.adaptiveSurface(for: colorScheme)
+            ElevatedSurface(level: .medium) {
+                EmberColors.adaptiveSurface(for: colorScheme)
+            }
         case .glassmorphic:
-            if colorScheme == .dark {
-                Color.white.opacity(0.1)
-                    .background(.ultraThinMaterial)
-            } else {
-                Color.white.opacity(0.7)
-                    .background(.ultraThinMaterial)
+            GlassmorphicCard(style: .standard) {
+                EmptyView()
             }
         }
     }
@@ -43,12 +41,11 @@ struct EmberCard<Content: View>: View {
     @ViewBuilder
     private var overlayView: some View {
         switch style {
-        case .normal, .elevated:
+        case .normal:
             RoundedRectangle(cornerRadius: 16)
                 .stroke(EmberColors.adaptiveBorder(for: colorScheme), lineWidth: 1)
-        case .glassmorphic:
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        case .elevated, .glassmorphic:
+            EmptyView()
         }
     }
     
@@ -151,7 +148,11 @@ struct EmberFeatureCard: View {
     @State private var isPressed = false
     
     var body: some View {
-        Button(action: action) {
+        InteractiveButton(
+            hapticType: .touch,
+            style: .gentle,
+            action: action
+        ) {
             EmberCard(style: .elevated) {
                 HStack(spacing: 16) {
                     ZStack {
@@ -159,35 +160,22 @@ struct EmberFeatureCard: View {
                             .fill(EmberColors.roseQuartz.opacity(0.2))
                             .frame(width: 50, height: 50)
                         
-                        Image(systemName: icon)
-                            .font(.title2)
-                            .foregroundColor(EmberColors.roseQuartz)
+                        AnimatedIcon(.touch, size: 24, color: EmberColors.roseQuartz, isActive: isPressed)
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(title)
-                            .emberTitle()
+                        DynamicTypeText(title, style: .headline)
                         
-                        Text(description)
-                            .emberBody(color: EmberColors.textSecondary)
+                        DynamicTypeText(description, style: .body, color: EmberColors.textSecondary)
                             .lineLimit(2)
                     }
                     
                     Spacer()
                     
-                    Image(systemName: "chevron.right")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(EmberColors.textSecondary)
+                    GlowIcon("chevron.right", size: 16, color: EmberColors.textSecondary)
                 }
             }
         }
-        .buttonStyle(PlainButtonStyle())
-        .scaleEffect(isPressed ? 0.98 : 1.0)
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isPressed = pressing
-            }
-        }, perform: {})
     }
 }
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "FA9E99D0-237E-4800-8D70-DBE57FD98F62"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.AddressBreakpoint">
+         <BreakpointContent
+            uuid = "5EDC211C-5861-4673-A95F-579C91ADAC5C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = "*0x100de9d04">
+            <Locations>
+               <Location
+                  uuid = "5EDC211C-5861-4673-A95F-579C91ADAC5C - d2acc4559f51ab35"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "dyld4::APIs::_dyld_register_for_bulk_image_loads(dyld4::ReadOnlyCallback&lt;void (*)(unsigned int, mach_header const**, char const**)&gt;)"
+                  moduleName = "dyld"
+                  usesParentBreakpointCondition = "Yes">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

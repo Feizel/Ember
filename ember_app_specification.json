@@ -1,0 +1,1400 @@
+{
+  "project_name": "Ember: Couples Haptics App",
+  "version": "2.0.0",
+  "last_updated": "2025-11-05",
+  "description": "Premium iOS couples app with haptic feedback, audio-haptic experiences, and warm editorial design inspired by wellness apps",
+  "design_system": {
+    "colors": {
+      "primary": {
+        "rose_quartz": "#FF6B9D",
+        "peachy_keen": "#FFB07A",
+        "coral_pop": "#FF8A65"
+      },
+      "semantic": {
+        "success": "#4CAF50",
+        "warning": "#FFC107",
+        "error": "#F44336",
+        "info": "#2196F3"
+      },
+      "neutrals": {
+        "background_light": "#FFFFFF",
+        "background_dark": "#0A0A0A",
+        "surface_light": "#F5F5F5",
+        "surface_dark": "#1C1C1E",
+        "text_primary": "#000000",
+        "text_secondary": "#8E8E93"
+      }
+    },
+    "typography": {
+      "font_family": "SF Pro Display / SF Pro Text",
+      "sizes": {
+        "title_large": {
+          "size": 34,
+          "weight": "bold",
+          "line_height": 41
+        },
+        "title": {
+          "size": 28,
+          "weight": "bold",
+          "line_height": 34
+        },
+        "headline": {
+          "size": 17,
+          "weight": "semibold",
+          "line_height": 22
+        },
+        "body": {
+          "size": 17,
+          "weight": "regular",
+          "line_height": 22
+        },
+        "callout": {
+          "size": 16,
+          "weight": "regular",
+          "line_height": 21
+        },
+        "subheadline": {
+          "size": 15,
+          "weight": "regular",
+          "line_height": 20
+        },
+        "footnote": {
+          "size": 13,
+          "weight": "regular",
+          "line_height": 18
+        },
+        "caption": {
+          "size": 12,
+          "weight": "regular",
+          "line_height": 16
+        }
+      }
+    },
+    "spacing": {
+      "xs": 8,
+      "sm": 12,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "xxl": 48
+    },
+    "corner_radius": {
+      "small": 8,
+      "medium": 16,
+      "large": 20,
+      "pill": 9999
+    },
+    "shadows": {
+      "level_1": {
+        "radius": 2,
+        "opacity": 0.1,
+        "offset_y": 1
+      },
+      "level_2": {
+        "radius": 4,
+        "opacity": 0.12,
+        "offset_y": 2
+      },
+      "level_3": {
+        "radius": 8,
+        "opacity": 0.15,
+        "offset_y": 4
+      },
+      "brand": {
+        "radius": 8,
+        "color": "rose_quartz",
+        "opacity": 0.15,
+        "offset_y": 4
+      }
+    }
+  },
+  "user_flows": {
+    "1_launch_splash": {
+      "screen_name": "Launch Screen",
+      "duration_ms": 1500,
+      "design": {
+        "background": "Linear gradient from rose_quartz to peachy_keen",
+        "logo": "Ember flame icon centered, 120x120pt",
+        "app_name": "Ember below logo, title_large size",
+        "tagline": "Where distance disappears, caption size",
+        "animation": "Logo gentle pulse, scale 1.0 to 1.05, 2s ease-in-out"
+      },
+      "technical": {
+        "implementation": "LaunchScreen.storyboard with auto-layout constraints",
+        "no_text_content": "Use images only, no localized strings per HIG",
+        "dark_mode": "Separate assets for light and dark appearance"
+      },
+      "audio": {
+        "sound": "None (silent on first launch per iOS best practice)"
+      },
+      "haptics": {
+        "feedback": "None (avoid feedback on launch)"
+      },
+      "transition_to": "2_onboarding_welcome"
+    },
+    "2_onboarding_welcome": {
+      "screen_name": "Onboarding: Welcome",
+      "step": 1,
+      "design": {
+        "layout": "Full-screen gradient background with centered content",
+        "hero": "3D Touchy & Syncee characters holding hands, 280x280pt",
+        "headline": "Stay connected through touch",
+        "subheadline": "No matter the distance",
+        "cta_primary": {
+          "label": "Get Started",
+          "style": "Filled gradient button, rose_quartz to coral_pop",
+          "corner_radius": "pill",
+          "height": 56,
+          "padding_horizontal": 32
+        },
+        "footer": "Terms & Privacy links, footnote size, low opacity"
+      },
+      "animation": {
+        "hero_entrance": "Characters fade in with gentle bounce, 0.6s spring",
+        "text_entrance": "Fade up with 0.2s delay, 0.4s ease-out",
+        "cta_hover": "Scale 1.0 to 0.96 on press, spring 0.3s bounce 0.2"
+      },
+      "audio": {
+        "sound": "subtle_chime.mp3 on screen entrance, 0.3s, volume 0.4",
+        "condition": "Only if device not in silent mode (AVAudioSession check)"
+      },
+      "haptics": {
+        "entrance": "light impact on screen load",
+        "cta_tap": "medium impact + notification success on tap"
+      },
+      "interaction": {
+        "cta_tap": {
+          "visual": "Scale + shadow reduction",
+          "haptic": "UIImpactFeedbackGenerator(style: .medium)",
+          "audio": "button_tap.mp3, 0.15s, volume 0.3",
+          "navigation": "Navigate to 3_onboarding_permissions"
+        }
+      },
+      "technical": {
+        "view": "OnboardingWelcomeView.swift",
+        "state_management": "ObservableObject OnboardingViewModel",
+        "accessibility": "VoiceOver labels for all interactive elements"
+      }
+    },
+    "3_onboarding_permissions": {
+      "screen_name": "Onboarding: Permissions",
+      "step": 2,
+      "design": {
+        "layout": "Vertical stack with icon-text pairs",
+        "headline": "We need a few permissions",
+        "permission_cards": [
+          {
+            "icon": "bell.badge.fill",
+            "title": "Notifications",
+            "description": "Get notified when your partner sends a touch",
+            "required": true
+          },
+          {
+            "icon": "hand.wave.fill",
+            "title": "Haptics",
+            "description": "Feel your partner's touch through vibrations",
+            "required": true
+          },
+          {
+            "icon": "mic.fill",
+            "title": "Microphone (Optional)",
+            "description": "Send voice messages to your partner",
+            "required": false
+          }
+        ],
+        "cta_primary": "Continue",
+        "skip_link": "Skip for now (secondary action)"
+      },
+      "animation": {
+        "cards_entrance": "Staggered fade-up, 0.1s delay between cards",
+        "card_tap": "Scale 0.98 with spring, highlight with brand shadow"
+      },
+      "audio": {
+        "card_tap": "soft_tap.mp3, 0.1s, volume 0.25",
+        "permission_granted": "success_chime.mp3, 0.4s, volume 0.35"
+      },
+      "haptics": {
+        "card_tap": "selection feedback",
+        "permission_granted": "notification success feedback",
+        "permission_denied": "notification warning feedback"
+      },
+      "interaction": {
+        "cta_tap": {
+          "action": "Request notifications and haptics permissions sequentially",
+          "visual": "Button loading state with spinner",
+          "haptic": "light impact",
+          "navigation": "Navigate to 4_onboarding_partner_setup"
+        }
+      },
+      "technical": {
+        "permissions": [
+          "UNUserNotificationCenter.requestAuthorization",
+          "CHHapticEngine.capabilitiesForHardware()",
+          "AVAudioSession.requestRecordPermission (optional)"
+        ],
+        "error_handling": "Show inline error if permission denied with retry option"
+      }
+    },
+    "4_onboarding_partner_setup": {
+      "screen_name": "Onboarding: Partner Connection",
+      "step": 3,
+      "design": {
+        "layout": "Two-column layout with user and partner sides",
+        "headline": "Connect with your partner",
+        "connection_methods": [
+          {
+            "icon": "qrcode",
+            "title": "Scan QR Code",
+            "description": "Have your partner show you their code"
+          },
+          {
+            "icon": "link",
+            "title": "Share Link",
+            "description": "Send an invite link via message"
+          },
+          {
+            "icon": "envelope.fill",
+            "title": "Enter Code",
+            "description": "Type in your partner's 6-digit code"
+          }
+        ],
+        "my_code_display": "Large 6-digit code with copy button",
+        "cta_primary": "Connect"
+      },
+      "animation": {
+        "code_reveal": "Digits fade in sequentially, 0.1s delay",
+        "qr_scan": "Scanning line animation, continuous loop",
+        "connection_success": "Checkmark scale with burst, 0.5s spring"
+      },
+      "audio": {
+        "code_copy": "tap_confirm.mp3, 0.1s",
+        "connection_success": "connection_made.mp3, 1.2s, volume 0.5",
+        "connection_fail": "error_tone.mp3, 0.6s, volume 0.4"
+      },
+      "haptics": {
+        "code_copy": "light impact",
+        "qr_detected": "medium impact",
+        "connection_success": "notification success + custom pattern",
+        "connection_fail": "notification error"
+      },
+      "custom_haptic_pattern": {
+        "connection_success": {
+          "events": [
+            {
+              "time": 0.0,
+              "type": "transient",
+              "intensity": 0.6,
+              "sharpness": 0.3
+            },
+            {
+              "time": 0.15,
+              "type": "transient",
+              "intensity": 0.8,
+              "sharpness": 0.5
+            },
+            {
+              "time": 0.3,
+              "type": "continuous",
+              "intensity": 0.5,
+              "sharpness": 0.2,
+              "duration": 0.8
+            }
+          ]
+        }
+      },
+      "technical": {
+        "connection_backend": "Firebase Firestore real-time listeners",
+        "qr_generation": "Core Image CIQRCodeGenerator",
+        "deep_linking": "Universal links for invite sharing"
+      }
+    },
+    "5_onboarding_character_setup": {
+      "screen_name": "Onboarding: Character Customization",
+      "step": 4,
+      "design": {
+        "layout": "Split view with user character left, partner character right",
+        "headline": "Meet Touchy & Syncee",
+        "subheadline": "Customize your blob companions",
+        "customization_options": {
+          "color_themes": [
+            "ember",
+            "sunset",
+            "ocean",
+            "forest",
+            "lavender",
+            "coral"
+          ],
+          "expressions": [
+            "happy",
+            "excited",
+            "love",
+            "sleepy",
+            "romantic"
+          ],
+          "accessories": [
+            "none",
+            "crown",
+            "bow",
+            "glasses",
+            "flower"
+          ]
+        },
+        "character_preview": "Live 3D blob with selected customization, 180x180pt",
+        "selector_ui": "Horizontal scrolling carousel for each option",
+        "cta_primary": "Looks perfect!"
+      },
+      "animation": {
+        "character_response": "Character bounces and changes expression on selection, 0.4s spring",
+        "color_transition": "Smooth gradient morph, 0.6s ease-in-out",
+        "accessory_pop": "Scale from 0 to 1.1 to 1.0, 0.5s elastic"
+      },
+      "audio": {
+        "option_select": "UI_select.mp3, 0.12s, volume 0.3",
+        "character_reaction": "blob_giggle.mp3, 0.8s, volume 0.4 (varies by expression)",
+        "confirmation": "success_warm.mp3, 0.7s, volume 0.45"
+      },
+      "haptics": {
+        "option_scroll": "selection feedback on snap",
+        "option_select": "light impact",
+        "character_bounce": "medium impact synchronized with bounce peak"
+      },
+      "technical": {
+        "3d_rendering": "SceneKit or RealityKit for character rendering",
+        "state_sync": "Save selections to UserDefaults and Firestore",
+        "performance": "Preload all character assets, 60fps target"
+      }
+    },
+    "6_onboarding_first_touch": {
+      "screen_name": "Onboarding: First Touch Tutorial",
+      "step": 5,
+      "design": {
+        "layout": "Full-screen interactive canvas",
+        "headline": "Try your first touch",
+        "instruction": "Draw on the canvas to send a hug",
+        "canvas": {
+          "size": "Full width, 400pt height",
+          "background": "Subtle gradient with particle effects",
+          "stroke_color": "Gradient trail following touch, rose to coral",
+          "stroke_width": 8
+        },
+        "gesture_guide": "Animated hand icon showing circular gesture",
+        "success_state": "Checkmark overlay with celebration particles"
+      },
+      "animation": {
+        "guide_demo": "Hand icon traces hug gesture, 3s loop with 1s pause",
+        "stroke_trail": "Particle system following finger, fade out 0.5s",
+        "success_celebration": "Confetti burst from center, 1.5s duration"
+      },
+      "audio": {
+        "stroke_sound": "gentle_whoosh.mp3, looped during drawing, volume 0.25",
+        "gesture_complete": "hug_sent.mp3, 1.0s, volume 0.5",
+        "celebration": "celebration_chime.mp3, 1.8s, volume 0.6"
+      },
+      "haptics": {
+        "stroke_feedback": "continuous light haptic during draw, intensity varies with speed",
+        "gesture_recognition": "medium impact when gesture recognized",
+        "send_success": "custom hug pattern"
+      },
+      "custom_haptic_pattern": {
+        "hug_sent": {
+          "events": [
+            {
+              "time": 0.0,
+              "type": "continuous",
+              "intensity": 0.3,
+              "sharpness": 0.2,
+              "duration": 0.4
+            },
+            {
+              "time": 0.4,
+              "type": "continuous",
+              "intensity": 0.6,
+              "sharpness": 0.3,
+              "duration": 0.6
+            },
+            {
+              "time": 1.0,
+              "type": "continuous",
+              "intensity": 0.4,
+              "sharpness": 0.2,
+              "duration": 0.5
+            }
+          ],
+          "description": "Gentle embrace sensation"
+        }
+      },
+      "interaction": {
+        "touch_began": {
+          "visual": "Stroke begins rendering",
+          "haptic": "Start continuous light feedback",
+          "audio": "Start whoosh loop"
+        },
+        "touch_moved": {
+          "visual": "Stroke follows finger with particle trail",
+          "haptic": "Modulate intensity based on velocity",
+          "audio": "Continue whoosh, pitch varies slightly with speed"
+        },
+        "touch_ended": {
+          "visual": "Stroke completes, analyze gesture",
+          "haptic": "Stop continuous, trigger recognition or send pattern",
+          "audio": "Stop whoosh, play completion sound",
+          "logic": "If valid hug gesture, trigger success state"
+        }
+      },
+      "technical": {
+        "gesture_recognition": "ML model or geometric analysis for hug pattern",
+        "haptic_engine": "CHHapticEngine with custom patterns from AHAP files",
+        "audio_session": "AVAudioSession with .playback category, .mixWithOthers option",
+        "canvas_rendering": "SwiftUI Canvas or UIKit with Core Graphics"
+      },
+      "completion": {
+        "criteria": "User successfully completes one hug gesture",
+        "navigation": "Auto-advance to 7_onboarding_paywall after 2s celebration"
+      }
+    },
+    "7_onboarding_paywall": {
+      "screen_name": "Onboarding: Premium Paywall",
+      "step": 6,
+      "design": {
+        "layout": "Transparent overlay with centered modal card",
+        "background": "Blur background with 50% opacity dark overlay",
+        "modal": {
+          "width": "90% screen width, max 400pt",
+          "corner_radius": 24,
+          "material": "ultraThinMaterial with brand tint"
+        },
+        "headline": "Unlock the full experience",
+        "subheadline": "Join thousands of couples staying connected",
+        "features_list": [
+          {
+            "icon": "heart.fill",
+            "title": "Unlimited touches & hugs"
+          },
+          {
+            "icon": "waveform.circle.fill",
+            "title": "Voice messages"
+          },
+          {
+            "icon": "photo.fill",
+            "title": "Photo sharing"
+          },
+          {
+            "icon": "location.fill",
+            "title": "Location sharing"
+          },
+          {
+            "icon": "sparkles",
+            "title": "Premium haptic patterns"
+          },
+          {
+            "icon": "chart.line.uptrend.xyaxis",
+            "title": "Relationship analytics"
+          }
+        ],
+        "pricing_cards": [
+          {
+            "plan": "monthly",
+            "price": "$4.99",
+            "period": "per month",
+            "badge": null
+          },
+          {
+            "plan": "yearly",
+            "price": "$39.99",
+            "period": "per year",
+            "badge": "Save 33%",
+            "recommended": true
+          }
+        ],
+        "cta_primary": "Start 7-Day Free Trial",
+        "cta_secondary": "Restore Purchases",
+        "disclaimer": "Cancel anytime. Auto-renews unless cancelled.",
+        "legal_links": "Terms \u2022 Privacy \u2022 Subscription Terms",
+        "close_button": "X icon top-right, visible but subtle"
+      },
+      "animation": {
+        "modal_entrance": "Scale from 0.9 to 1.0 with spring, 0.5s bounce 0.3",
+        "features_stagger": "Each feature fades in with 0.08s delay",
+        "plan_selection": "Selected card scales 1.05, border glow",
+        "cta_loading": "Spinner replaces text during purchase"
+      },
+      "audio": {
+        "modal_appear": "modal_open.mp3, 0.4s, volume 0.3",
+        "feature_appear": "subtle_tick.mp3, 0.08s, volume 0.2 (per feature)",
+        "plan_select": "selection_confirm.mp3, 0.15s, volume 0.3",
+        "purchase_success": "purchase_success.mp3, 1.5s, volume 0.5",
+        "purchase_error": "error_tone.mp3, 0.6s, volume 0.4"
+      },
+      "haptics": {
+        "modal_appear": "light impact",
+        "plan_select": "selection feedback",
+        "purchase_initiated": "medium impact",
+        "purchase_success": "notification success",
+        "purchase_error": "notification error"
+      },
+      "interaction": {
+        "plan_card_tap": {
+          "visual": "Deselect others, select tapped, animate scale and border",
+          "haptic": "selection feedback",
+          "audio": "plan_select sound",
+          "state": "Update selectedPlan in ViewModel"
+        },
+        "cta_primary_tap": {
+          "visual": "Button enters loading state",
+          "haptic": "medium impact",
+          "action": "Initiate StoreKit purchase flow",
+          "on_success": {
+            "visual": "Confetti animation, checkmark overlay",
+            "haptic": "notification success + custom celebration pattern",
+            "audio": "purchase_success sound",
+            "navigation": "Dismiss paywall, navigate to 8_home_first_time"
+          },
+          "on_error": {
+            "visual": "Shake animation, show error alert",
+            "haptic": "notification error",
+            "audio": "purchase_error sound",
+            "state": "Return to idle state"
+          }
+        },
+        "close_tap": {
+          "visual": "Modal dismisses with scale and fade",
+          "haptic": "light impact",
+          "audio": "modal_close.mp3, 0.3s, volume 0.25",
+          "navigation": "Proceed to 8_home_first_time (limited features)"
+        }
+      },
+      "technical": {
+        "in_app_purchase": "StoreKit 2 with auto-renewable subscriptions",
+        "products": [
+          {
+            "id": "com.ember.monthly",
+            "duration": "1 month"
+          },
+          {
+            "id": "com.ember.yearly",
+            "duration": "1 year"
+          }
+        ],
+        "subscription_groups": "Ember Premium",
+        "trial_period": "7 days free trial on first purchase",
+        "restore": "Transaction.currentEntitlements for restore",
+        "compliance": "Visible terms, price, renewal, cancellation per App Store guidelines"
+      }
+    },
+    "8_home_first_time": {
+      "screen_name": "Home: First Launch",
+      "design": {
+        "status_bar": "Light content for dark nav, dark content for light nav",
+        "navigation_bar": {
+          "style": "Large title",
+          "title": "Ember",
+          "trailing_items": [
+            "Profile avatar 32x32pt"
+          ]
+        },
+        "presence_pill": {
+          "layout": "HStack with dot, icon, text",
+          "dot_size": 8,
+          "dot_color": "Semantic (green=online, gray=offline, yellow=away)",
+          "icon": "SF Symbol for mood (heart, zzz, etc)",
+          "text": "Partner mood status",
+          "background": "ultraThinMaterial capsule",
+          "position": "Top center below nav bar"
+        },
+        "headline_section": {
+          "headline": "Send your first hug",
+          "style": "title_large, bold, gradient text",
+          "alignment": "Center",
+          "margin_bottom": "lg"
+        },
+        "hero_button": {
+          "label": "Send Touch",
+          "icon": "hand.wave.fill",
+          "height": 64,
+          "corner_radius": 20,
+          "background": "Gradient rose_quartz to coral_pop",
+          "shadow": "brand shadow level 3",
+          "position": "Sticky below headline, above fold"
+        },
+        "characters_section": {
+          "layout": "HStack with spacer between",
+          "user_character": {
+            "size": 120,
+            "position": "Left",
+            "label": "You",
+            "status": "Available"
+          },
+          "connection_indicator": {
+            "type": "Heart icon or link chain",
+            "animation": "Pulse on active connection"
+          },
+          "partner_character": {
+            "size": 120,
+            "position": "Right",
+            "label": "Partner name",
+            "status": "Partner status"
+          }
+        },
+        "connection_card": {
+          "layout": "VStack in rounded rectangle card",
+          "title": "Today's Connection",
+          "progress_ring": {
+            "size": 100,
+            "stroke_width": 8,
+            "current": 0,
+            "goal": 10,
+            "label": "0 of 10 touches",
+            "gradient": "rose_quartz to coral_pop"
+          },
+          "last_touch": "No touches yet",
+          "background": "ultraThinMaterial card",
+          "corner_radius": 20,
+          "padding": "md"
+        },
+        "demo_chip": {
+          "visible": true,
+          "condition": "hasCompletedFirstTouch == false",
+          "layout": "HStack in capsule",
+          "icon": "hand.sparkles",
+          "text": "Try sending your first hug",
+          "background": "peachy_keen opacity 0.2 with border",
+          "position": "Above connection card"
+        },
+        "quick_actions": {
+          "layout": "Horizontal scroll of action buttons",
+          "actions": [
+            {
+              "icon": "heart.fill",
+              "label": "Kiss",
+              "haptic": "kiss_pattern"
+            },
+            {
+              "icon": "figure.arms.open",
+              "label": "Hug",
+              "haptic": "hug_pattern"
+            },
+            {
+              "icon": "hand.wave.fill",
+              "label": "Wave",
+              "haptic": "wave_pattern"
+            },
+            {
+              "icon": "hand.tap.fill",
+              "label": "Love Tap",
+              "haptic": "tap_pattern"
+            }
+          ],
+          "button_size": 80,
+          "spacing": "sm"
+        },
+        "tab_bar": {
+          "style": "Standard iOS tab bar with blur material",
+          "tabs": [
+            {
+              "id": "home",
+              "icon": "house.fill",
+              "label": "Home"
+            },
+            {
+              "id": "memories",
+              "icon": "heart.circle.fill",
+              "label": "Memories"
+            },
+            {
+              "id": "send",
+              "icon": "hand.wave.fill",
+              "label": "Send"
+            },
+            {
+              "id": "profile",
+              "icon": "person.fill",
+              "label": "Profile"
+            }
+          ],
+          "selected_tint": "rose_quartz",
+          "unselected_tint": "secondary"
+        }
+      },
+      "animation": {
+        "entrance": "Cards fade in with stagger, 0.1s delay",
+        "hero_button_idle": "Subtle pulse shadow, 2.5s loop",
+        "hero_button_press": "Scale 0.96 with spring 0.3s bounce 0.2",
+        "character_breathing": "Scale 1.0 to 1.06, 3.6s ease-in-out repeat",
+        "character_blink": "Random blinks every 2-4s, 0.2s duration",
+        "progress_ring": "Animate trim on value change, 0.6s spring bounce 0.15",
+        "demo_chip_pulse": "Gentle scale 1.0 to 1.02, 2s ease-in-out repeat"
+      },
+      "audio": {
+        "screen_load": "app_open.mp3, 0.5s, volume 0.3",
+        "hero_button_tap": "button_press_warm.mp3, 0.2s, volume 0.35",
+        "quick_action_tap": "quick_tap.mp3, 0.12s, volume 0.3",
+        "character_tap": "character_giggle.mp3, 0.6s, volume 0.4"
+      },
+      "haptics": {
+        "screen_load": "light impact",
+        "hero_button_tap": "medium impact + custom send pattern",
+        "quick_action_tap": "light impact + specific gesture pattern",
+        "character_tap": "selection feedback",
+        "progress_milestone": "notification success when goal reached"
+      },
+      "interaction": {
+        "hero_button_tap": {
+          "visual": "Scale animation, shadow reduce",
+          "haptic": "medium impact",
+          "audio": "hero_button_tap sound",
+          "navigation": "Present touch canvas modal"
+        },
+        "quick_action_tap": {
+          "visual": "Scale animation",
+          "haptic": "light impact + gesture-specific pattern",
+          "audio": "quick_action_tap sound",
+          "action": "Send pre-defined gesture to partner",
+          "feedback": "Toast confirmation with sent icon"
+        },
+        "demo_chip_tap": {
+          "visual": "Highlight animation",
+          "haptic": "selection feedback",
+          "audio": "tap_confirm.mp3",
+          "navigation": "Navigate to touch canvas with tutorial overlay"
+        },
+        "character_tap": {
+          "visual": "Character bounces and changes expression",
+          "haptic": "selection feedback",
+          "audio": "character_giggle sound",
+          "action": "Cycle through expressions"
+        }
+      },
+      "technical": {
+        "view": "HomeView.swift",
+        "state": "HomeViewModel with @Published properties",
+        "real_time": "Firestore listeners for partner status and touch events",
+        "local_storage": "Core Data for touch history cache",
+        "notifications": "Handle remote push for partner touches"
+      }
+    },
+    "9_touch_canvas": {
+      "screen_name": "Touch Canvas",
+      "presentation": "Full screen modal",
+      "design": {
+        "navigation_bar": {
+          "style": "Standard with transparent background",
+          "title": "Send Touch",
+          "leading": "Close button",
+          "trailing": "Pattern picker icon"
+        },
+        "canvas": {
+          "size": "Full screen minus safe areas",
+          "background": "Subtle animated gradient",
+          "stroke_style": {
+            "color": "Gradient following touch",
+            "width": 8,
+            "trail": "Particle system with 0.5s fade"
+          }
+        },
+        "intensity_slider": {
+          "position": "Bottom 20% of screen",
+          "label": "Intensity",
+          "range": "0.0 to 1.0",
+          "visual": "Gradient track rose to coral"
+        },
+        "send_button": {
+          "label": "Send",
+          "position": "Bottom center",
+          "style": "Large filled button, 56pt height",
+          "enabled_state": "Visible only after drawing started"
+        }
+      },
+      "animation": {
+        "canvas_appear": "Fade in 0.3s",
+        "stroke_trail": "Particles spawn at touch, fade 0.5s",
+        "intensity_glow": "Slider thumb glows at higher values",
+        "send_button_appear": "Slide up with spring 0.4s after first stroke"
+      },
+      "audio": {
+        "canvas_open": "modal_open.mp3, 0.3s",
+        "stroke_drawing": "drawing_whoosh.mp3, looped, volume varies with intensity",
+        "intensity_change": "slider_tick.mp3, 0.08s on value snap",
+        "send_success": "touch_sent.mp3, 1.2s, volume 0.5",
+        "send_error": "error_gentle.mp3, 0.5s, volume 0.4"
+      },
+      "haptics": {
+        "canvas_open": "light impact",
+        "stroke_began": "Start continuous haptic, intensity 0.2",
+        "stroke_moved": "Modulate continuous haptic 0.2-0.8 based on intensity slider",
+        "stroke_ended": "Stop continuous, medium impact",
+        "intensity_change": "selection feedback on significant change",
+        "send_initiated": "medium impact",
+        "send_success": "notification success + custom pattern based on gesture",
+        "send_error": "notification error"
+      },
+      "interaction": {
+        "touch_began": {
+          "visual": "Start stroke rendering",
+          "haptic": "Start continuous feedback at set intensity",
+          "audio": "Start drawing_whoosh loop",
+          "state": "Set isDrawing = true"
+        },
+        "touch_moved": {
+          "visual": "Continue stroke with particle trail",
+          "haptic": "Modulate intensity based on slider value",
+          "audio": "Continue drawing_whoosh, pitch varies",
+          "state": "Append point to stroke path"
+        },
+        "touch_ended": {
+          "visual": "Complete stroke",
+          "haptic": "Stop continuous, trigger impact",
+          "audio": "Stop whoosh",
+          "state": "Analyze stroke, enable send button"
+        },
+        "intensity_slider_change": {
+          "visual": "Update slider position, glow",
+          "haptic": "Selection feedback on snap points",
+          "audio": "slider_tick sound",
+          "state": "Update hapticIntensity variable"
+        },
+        "send_button_tap": {
+          "visual": "Button loading state",
+          "haptic": "medium impact",
+          "audio": "None yet",
+          "action": "Package stroke data + intensity, send to partner via Firebase",
+          "on_success": {
+            "visual": "Success checkmark overlay, canvas fades",
+            "haptic": "notification success + gesture pattern",
+            "audio": "send_success sound",
+            "navigation": "Dismiss modal after 1s",
+            "toast": "Touch sent to [Partner]"
+          },
+          "on_error": {
+            "visual": "Shake animation, error alert",
+            "haptic": "notification error",
+            "audio": "send_error sound",
+            "state": "Show retry option"
+          }
+        }
+      },
+      "technical": {
+        "view": "TouchCanvasView.swift",
+        "drawing_engine": "SwiftUI Canvas or PKCanvasView for optimized rendering",
+        "haptic_engine": "CHHapticEngine with continuous and transient events",
+        "audio_engine": "AVAudioEngine for real-time audio manipulation",
+        "gesture_recognition": "Core ML model to classify gestures (kiss, hug, wave)",
+        "data_model": "Touch object with path points, intensity, timestamp",
+        "backend": "Firebase Cloud Functions to relay touch to partner device"
+      }
+    },
+    "10_receiving_touch": {
+      "screen_name": "Receiving Touch Notification",
+      "trigger": "Remote push notification when partner sends touch",
+      "design": {
+        "notification": {
+          "style": "iOS banner notification",
+          "title": "[Partner name] sent you a touch",
+          "body": "Tap to feel it",
+          "icon": "App icon with badge",
+          "category": "TOUCH_RECEIVED"
+        },
+        "in_app_experience": {
+          "layout": "Full screen overlay if app is active",
+          "background": "Animated gradient matching gesture type",
+          "character": "Partner character with expression for gesture",
+          "label": "[Partner] sent you a hug",
+          "visual_effect": "Ripple animation emanating from character"
+        }
+      },
+      "animation": {
+        "notification_banner": "Standard iOS slide down",
+        "in_app_overlay": "Fade in 0.3s with scale 0.95 to 1.0",
+        "ripple_effect": "Concentric circles expanding, 1.5s duration",
+        "character_reaction": "Bounce and expression change"
+      },
+      "audio": {
+        "notification_sound": "touch_received.mp3, 0.8s, system volume",
+        "in_app_sound": "Gesture-specific sound (hug_received.mp3, kiss_received.mp3)",
+        "volume": 0.6,
+        "respect_silent": true
+      },
+      "haptics": {
+        "notification_haptic": "Gesture-specific custom pattern",
+        "hug_pattern": {
+          "events": [
+            {
+              "time": 0.0,
+              "type": "continuous",
+              "intensity": 0.4,
+              "sharpness": 0.2,
+              "duration": 0.6
+            },
+            {
+              "time": 0.6,
+              "type": "continuous",
+              "intensity": 0.7,
+              "sharpness": 0.3,
+              "duration": 0.8
+            },
+            {
+              "time": 1.4,
+              "type": "continuous",
+              "intensity": 0.3,
+              "sharpness": 0.15,
+              "duration": 0.5
+            }
+          ]
+        },
+        "kiss_pattern": {
+          "events": [
+            {
+              "time": 0.0,
+              "type": "transient",
+              "intensity": 0.6,
+              "sharpness": 0.5
+            },
+            {
+              "time": 0.2,
+              "type": "transient",
+              "intensity": 0.4,
+              "sharpness": 0.3
+            }
+          ]
+        }
+      },
+      "interaction": {
+        "notification_tap": {
+          "action": "Open app to home screen, display in-app experience",
+          "visual": "App launches to overlay",
+          "haptic": "Replay gesture pattern",
+          "audio": "Play gesture sound"
+        },
+        "overlay_tap": {
+          "action": "Dismiss overlay, return to previous screen",
+          "visual": "Fade out 0.3s",
+          "haptic": "light impact",
+          "audio": "subtle_dismiss.mp3, 0.2s"
+        }
+      },
+      "technical": {
+        "push_notification": "APNs with custom payload including gesture type and intensity",
+        "payload": {
+          "aps": {
+            "alert": {
+              "title": "...",
+              "body": "..."
+            },
+            "sound": "touch_received.mp3",
+            "category": "TOUCH_RECEIVED"
+          },
+          "gesture": "hug",
+          "intensity": 0.75,
+          "sender": "partner_id"
+        },
+        "handler": "UNUserNotificationCenterDelegate methods",
+        "haptic_playback": "CHHapticEngine with pattern loaded from AHAP file or generated",
+        "foreground_handling": "Show custom overlay instead of banner"
+      }
+    }
+  },
+  "haptic_patterns": {
+    "description": "Custom Core Haptics patterns for different gestures and events",
+    "patterns": {
+      "kiss": {
+        "file": "kiss.ahap",
+        "events": [
+          {
+            "time": 0.0,
+            "type": "transient",
+            "intensity": 0.6,
+            "sharpness": 0.5
+          },
+          {
+            "time": 0.15,
+            "type": "transient",
+            "intensity": 0.4,
+            "sharpness": 0.3
+          }
+        ],
+        "duration": 0.3
+      },
+      "hug": {
+        "file": "hug.ahap",
+        "events": [
+          {
+            "time": 0.0,
+            "type": "continuous",
+            "intensity": 0.4,
+            "sharpness": 0.2,
+            "duration": 0.6
+          },
+          {
+            "time": 0.6,
+            "type": "continuous",
+            "intensity": 0.7,
+            "sharpness": 0.3,
+            "duration": 0.8
+          },
+          {
+            "time": 1.4,
+            "type": "continuous",
+            "intensity": 0.3,
+            "sharpness": 0.15,
+            "duration": 0.5
+          }
+        ],
+        "duration": 1.9
+      },
+      "wave": {
+        "file": "wave.ahap",
+        "events": [
+          {
+            "time": 0.0,
+            "type": "transient",
+            "intensity": 0.5,
+            "sharpness": 0.4
+          },
+          {
+            "time": 0.2,
+            "type": "transient",
+            "intensity": 0.6,
+            "sharpness": 0.5
+          },
+          {
+            "time": 0.4,
+            "type": "transient",
+            "intensity": 0.4,
+            "sharpness": 0.3
+          }
+        ],
+        "duration": 0.6
+      },
+      "love_tap": {
+        "file": "love_tap.ahap",
+        "events": [
+          {
+            "time": 0.0,
+            "type": "transient",
+            "intensity": 0.7,
+            "sharpness": 0.6
+          },
+          {
+            "time": 0.1,
+            "type": "transient",
+            "intensity": 0.5,
+            "sharpness": 0.4
+          }
+        ],
+        "duration": 0.2
+      },
+      "connection_success": {
+        "file": "connection_success.ahap",
+        "events": [
+          {
+            "time": 0.0,
+            "type": "transient",
+            "intensity": 0.6,
+            "sharpness": 0.3
+          },
+          {
+            "time": 0.15,
+            "type": "transient",
+            "intensity": 0.8,
+            "sharpness": 0.5
+          },
+          {
+            "time": 0.3,
+            "type": "continuous",
+            "intensity": 0.5,
+            "sharpness": 0.2,
+            "duration": 0.8
+          }
+        ],
+        "duration": 1.1
+      },
+      "celebration": {
+        "file": "celebration.ahap",
+        "events": [
+          {
+            "time": 0.0,
+            "type": "transient",
+            "intensity": 0.8,
+            "sharpness": 0.7
+          },
+          {
+            "time": 0.15,
+            "type": "transient",
+            "intensity": 0.9,
+            "sharpness": 0.8
+          },
+          {
+            "time": 0.3,
+            "type": "transient",
+            "intensity": 0.7,
+            "sharpness": 0.6
+          },
+          {
+            "time": 0.45,
+            "type": "continuous",
+            "intensity": 0.6,
+            "sharpness": 0.4,
+            "duration": 0.4
+          }
+        ],
+        "duration": 0.85
+      }
+    }
+  },
+  "audio_assets": {
+    "description": "Audio files for multimodal feedback, respect silent mode via AVAudioSession",
+    "configuration": {
+      "category": "AVAudioSession.Category.playback",
+      "options": "[.mixWithOthers]",
+      "silent_mode_check": "AVAudioSession.sharedInstance().outputVolume == 0"
+    },
+    "sounds": {
+      "onboarding": {
+        "subtle_chime.mp3": {
+          "duration": 0.3,
+          "volume": 0.4
+        },
+        "button_tap.mp3": {
+          "duration": 0.15,
+          "volume": 0.3
+        },
+        "soft_tap.mp3": {
+          "duration": 0.1,
+          "volume": 0.25
+        },
+        "success_chime.mp3": {
+          "duration": 0.4,
+          "volume": 0.35
+        },
+        "connection_made.mp3": {
+          "duration": 1.2,
+          "volume": 0.5
+        },
+        "blob_giggle.mp3": {
+          "duration": 0.8,
+          "volume": 0.4
+        },
+        "success_warm.mp3": {
+          "duration": 0.7,
+          "volume": 0.45
+        },
+        "celebration_chime.mp3": {
+          "duration": 1.8,
+          "volume": 0.6
+        }
+      },
+      "ui_feedback": {
+        "tap_confirm.mp3": {
+          "duration": 0.1,
+          "volume": 0.3
+        },
+        "UI_select.mp3": {
+          "duration": 0.12,
+          "volume": 0.3
+        },
+        "selection_confirm.mp3": {
+          "duration": 0.15,
+          "volume": 0.3
+        },
+        "modal_open.mp3": {
+          "duration": 0.4,
+          "volume": 0.3
+        },
+        "modal_close.mp3": {
+          "duration": 0.3,
+          "volume": 0.25
+        },
+        "subtle_tick.mp3": {
+          "duration": 0.08,
+          "volume": 0.2
+        }
+      },
+      "touch_interactions": {
+        "gentle_whoosh.mp3": {
+          "duration": "loop",
+          "volume": 0.25
+        },
+        "drawing_whoosh.mp3": {
+          "duration": "loop",
+          "volume": 0.3
+        },
+        "slider_tick.mp3": {
+          "duration": 0.08,
+          "volume": 0.3
+        },
+        "touch_sent.mp3": {
+          "duration": 1.2,
+          "volume": 0.5
+        },
+        "touch_received.mp3": {
+          "duration": 0.8,
+          "volume": 0.6
+        },
+        "hug_sent.mp3": {
+          "duration": 1.0,
+          "volume": 0.5
+        },
+        "hug_received.mp3": {
+          "duration": 1.2,
+          "volume": 0.6
+        },
+        "kiss_received.mp3": {
+          "duration": 0.5,
+          "volume": 0.5
+        }
+      },
+      "errors": {
+        "error_tone.mp3": {
+          "duration": 0.6,
+          "volume": 0.4
+        },
+        "error_gentle.mp3": {
+          "duration": 0.5,
+          "volume": 0.4
+        }
+      }
+    }
+  },
+  "technical_implementation": {
+    "architecture": {
+      "pattern": "MVVM with Combine",
+      "navigation": "SwiftUI NavigationStack with programmatic routing",
+      "state_management": "@StateObject, @ObservedObject, @Published properties",
+      "dependency_injection": "Environment objects for shared state"
+    },
+    "frameworks": {
+      "ui": "SwiftUI for all views",
+      "haptics": "Core Haptics (CHHapticEngine, CHHapticPattern)",
+      "audio": "AVFoundation (AVAudioSession, AVAudioPlayer, AVAudioEngine)",
+      "animation": "SwiftUI animations + Lottie-iOS for complex sequences",
+      "3d_characters": "SceneKit or RealityKit for blob rendering",
+      "networking": "Firebase (Firestore, Auth, Cloud Functions, Cloud Messaging)",
+      "storage": "Core Data for local cache, Firestore for cloud sync",
+      "in_app_purchase": "StoreKit 2",
+      "analytics": "Firebase Analytics + custom event tracking"
+    },
+    "performance": {
+      "target_fps": 60,
+      "animation_optimization": "Use .animation modifier sparingly, prefer explicit withAnimation",
+      "lottie_optimization": "Preload small files, .respectAnimationFrameRate = true",
+      "haptic_optimization": "Reuse CHHapticEngine instance, prepare patterns in advance",
+      "audio_optimization": "Preload common sounds, use compressed audio formats (AAC)",
+      "battery_awareness": "Pause continuous animations on low battery, reduce haptic intensity"
+    },
+    "accessibility": {
+      "voice_over": "All interactive elements have accessibility labels and hints",
+      "dynamic_type": "Support all text sizes, layout adapts",
+      "reduce_motion": "Respect accessibility settings, provide alternative feedback",
+      "color_contrast": "WCAG AA compliance, use semantic colors",
+      "haptic_accessibility": "Provide visual and audio alternatives for haptics"
+    },
+    "dark_mode": {
+      "support": "Automatic with separate color sets",
+      "strategy": "Semantic colors that adapt, preserve accent saturation",
+      "testing": "Test all screens in both modes"
+    }
+  },
+  "app_store_compliance": {
+    "in_app_purchase": {
+      "guideline": "3.1.1 Business - Payments - In-App Purchase",
+      "requirement": "All premium digital features via IAP, no external purchases",
+      "implementation": "StoreKit 2 auto-renewable subscriptions",
+      "subscription_groups": [
+        "Ember Premium"
+      ],
+      "products": [
+        {
+          "id": "com.ember.monthly",
+          "price": "$4.99",
+          "duration": "1 month"
+        },
+        {
+          "id": "com.ember.yearly",
+          "price": "$39.99",
+          "duration": "1 year",
+          "free_trial": "7 days"
+        }
+      ]
+    },
+    "privacy": {
+      "guideline": "5.1 Privacy",
+      "data_collection": "User authentication, partner connection, touch history, location (optional)",
+      "privacy_policy": "Required, linked in App Store Connect and in-app",
+      "data_encryption": "End-to-end encryption for touch data and messages",
+      "data_sharing": "No third-party sharing except service providers (Firebase)"
+    },
+    "user_generated_content": {
+      "guideline": "1.2 User Generated Content",
+      "moderation": "Not applicable (1:1 communication only)",
+      "reporting": "Allow users to report abusive partner behavior"
+    },
+    "design": {
+      "guideline": "4.0 Design",
+      "hig_compliance": "Follows Human Interface Guidelines",
+      "native_features": "Uses standard iOS controls and patterns",
+      "performance": "60fps target, no crashes, efficient battery usage"
+    }
+  },
+  "testing_checklist": {
+    "functionality": [
+      "User authentication and account creation",
+      "Partner connection via QR, link, and code",
+      "Character customization saves and syncs",
+      "Touch canvas drawing and sending",
+      "Receiving touches with haptics and audio",
+      "Quick action gestures work correctly",
+      "In-app purchase flow completes successfully",
+      "Restore purchases works",
+      "Subscription status syncs across devices"
+    ],
+    "multimodal_feedback": [
+      "All haptic patterns play correctly on supported devices",
+      "Audio plays at correct volume and respects silent mode",
+      "Visual animations are smooth at 60fps",
+      "Feedback is synchronized (visual + haptic + audio timing)",
+      "Haptics gracefully degrade on unsupported devices",
+      "Audio session handles interruptions (calls, other apps)"
+    ],
+    "edge_cases": [
+      "Network offline: show appropriate errors, queue touches",
+      "Low battery: reduce animation and haptic intensity",
+      "Silent mode: audio muted, visual and haptic remain",
+      "Reduce motion enabled: animations simplified",
+      "Large text sizes: layout remains readable",
+      "Dark mode: all screens look correct"
+    ],
+    "devices": [
+      "iPhone 15 Pro Max (latest)",
+      "iPhone SE 3rd gen (smallest screen, A15 chip)",
+      "iPhone 12 (mid-range, representative of user base)",
+      "iPad support (optional, but test if targeting)"
+    ]
+  },
+  "launch_strategy": {
+    "app_store_listing": {
+      "app_name": "Ember: Couples Connection",
+      "subtitle": "Stay connected through touch",
+      "keywords": "couples, long distance, relationship, touch, haptic, love, connection, intimacy",
+      "description": "Transform your iPhone into a bridge for physical affection. Send touches, hugs, and kisses your partner can feel through haptic feedback...",
+      "screenshots": [
+        "Onboarding character customization",
+        "Home screen with connection progress",
+        "Touch canvas in action",
+        "Receiving touch experience",
+        "Premium features list"
+      ],
+      "app_preview_video": "30s showing core experience: connect, customize, send touch, receive with haptics"
+    },
+    "pricing_strategy": {
+      "free_tier": "Limited touches per day, basic haptics, core features",
+      "premium": "Unlimited touches, voice messages, photo sharing, location, premium haptics, analytics",
+      "trial": "7-day free trial on first subscription",
+      "pricing": "$4.99/month or $39.99/year (33% savings)"
+    },
+    "marketing": {
+      "target_audience": "Long-distance couples 18-35, tech-savvy, privacy-conscious",
+      "channels": "Instagram, TikTok, Reddit (r/LongDistance), couples influencers",
+      "content_strategy": "Show real couples using app, emotional testimonials, haptic demos",
+      "launch_timing": "Valentine's Day window for maximum impact"
+    }
+  }
+}

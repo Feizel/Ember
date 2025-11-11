@@ -47,6 +47,15 @@ class EmberAuthManager: ObservableObject {
             throw AuthError.invalidInviteCode
         }
     }
+    
+    func authenticateUser(userId: String) {
+        currentUser = MockUser(uid: userId)
+        isAuthenticated = true
+    }
+    
+    func setPartnerId(_ id: String) {
+        partnerId = id
+    }
 }
 
 enum AuthError: LocalizedError {

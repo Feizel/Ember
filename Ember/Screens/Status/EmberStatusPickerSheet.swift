@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Status Picker Sheet
 struct EmberStatusPickerSheet: View {
-    @Binding var currentStatus: UserStatus
+    @Binding var currentStatus: Ember.UserStatus
     @Environment(\.dismiss) private var dismiss
     @State private var customMessage = ""
     @State private var showingAllStatuses = false
@@ -205,7 +205,7 @@ struct EmberStatusPickerSheet: View {
 // MARK: - Status Card Component
 struct EmberStatusCard: View {
     let status: CoupleStatus
-    let currentStatus: UserStatus
+    let currentStatus: Ember.UserStatus
     let onSelect: (CoupleStatus) -> Void
     
     var body: some View {
@@ -275,7 +275,7 @@ struct EmberStatusCard: View {
 
 // MARK: - All Statuses View
 struct EmberAllStatusesView: View {
-    @Binding var currentStatus: UserStatus
+    @Binding var currentStatus: Ember.UserStatus
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -320,5 +320,5 @@ struct EmberAllStatusesView: View {
 }
 
 #Preview {
-    EmberStatusPickerSheet(currentStatus: .constant(UserStatus()))
+    EmberStatusPickerSheet(currentStatus: .constant(Ember.UserStatus()))
 }
